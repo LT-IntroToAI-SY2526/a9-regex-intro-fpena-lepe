@@ -1,10 +1,15 @@
-# some python libraries we'll be using
 import re, string, calendar
+import wikipedia
 from wikipedia import page
 from bs4 import BeautifulSoup
 
 from typing import List, Match
 from utilities import *
+
+# Wikipedia sometimes blocks empty user agents. 
+# This helps prevent that JSONDecodeError.
+wikipedia.set_lang("en")
+wikipedia.set_user_agent("PlanetRadiusBot/1.0 (contact: fpena-lepe@cps.edu)")
 
 # Assignment 8 Part II
 
@@ -20,7 +25,8 @@ def get_planet_radius(planet_name: str) -> str:
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(planet_name)))
     # TODO: fill this in
-    pattern = r"Polar radius\s+(?P<radius>[\d.,]+).*?km"
+    pattern = r"Polar\s*radius\s*[:\-\s]*(?P<radius>[\d,.]+)\s*(?:km|m)?"
+    
     error_text = "Page infobox has no polar radius information"
     match = get_match(infobox_text, pattern, error_text)
     return match.group("radius")
